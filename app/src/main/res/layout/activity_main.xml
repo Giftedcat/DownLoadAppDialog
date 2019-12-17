@@ -7,7 +7,7 @@
 
     <Button
         android:id="@+id/btn_check_version"
-        android:text="检查更新"
+        android:text="开始下载"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
