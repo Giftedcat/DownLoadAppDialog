@@ -55,8 +55,8 @@ public class DownLoadAppDialog extends Dialog {
 
     /**
      * 获取需要下载的文件地址，显示弹窗
-     * */
-    public void show(List<String> apkUrls){
+     */
+    public void show(List<String> apkUrls) {
         show();
         content = "";
         this.apkUrls = apkUrls;
@@ -66,10 +66,12 @@ public class DownLoadAppDialog extends Dialog {
 
     /**
      * 设置下载成功回调
-     * */
-    public void setOnDownLoadListener(DownLoadAppListener listener){
+     */
+    public void setOnDownLoadListener(DownLoadAppListener listener) {
         this.listener = listener;
     }
+
+
 
     /**
      * 轮询下载安装app的函数
@@ -92,15 +94,10 @@ public class DownLoadAppDialog extends Dialog {
         if (TextUtils.isEmpty(apkUrl)) {
             //如果apk的地址为空，则跳过，开始下载下一个
             downNextApp(index);
+            return;
         }
 
-        //获取下载文件的文件名
-        final String name = UrlUtils.getUrlFileName(apkUrl);
-        content += "\n" + name;
-        final String localPath = Environment.getExternalStoragePublicDirectory("") + "/Download/" + name + ".apk";
-        LogUtil.i("localAppPath:" + localPath);
-        //如果已有同名文件将其删除
-        deleteFile(localPath);
+        final String localPath = getLocalPath(apkUrl);
         httpTools.download(apkUrl, localPath, true, new HttpCallback() {
             @Override
             public void onHttpStart() {
@@ -120,7 +117,6 @@ public class DownLoadAppDialog extends Dialog {
                         //安装成功
                         installStatus = true;
                         content += "(安装成功)";
-                        LogUtil.e(name);
                     } else {
                         //安装失败
                         installStatus = false;
@@ -128,7 +124,7 @@ public class DownLoadAppDialog extends Dialog {
                     }
                     //完成后删除文件
                     deleteFile(localPath);
-                    if (listener != null){
+                    if (listener != null) {
                         //回调给使用者
                         listener.downloadFinish(installStatus, localPath);
                     }
@@ -147,6 +143,28 @@ public class DownLoadAppDialog extends Dialog {
                 downNextApp(index);
             }
         });
+    }
+
+    /**
+     * 根据下载地址创建本地文件路径
+     */
+    private String getLocalPath(String apkUrl) {
+        //获取下载文件的文件名
+        final String name = UrlUtils.getUrlFileName(apkUrl);
+        content += "\n" + name;
+        final String localPath = Environment.getExternalStoragePublicDirectory("") + "/Download/" + name + ".apk";
+        LogUtil.i("localAppPath:" + localPath);
+        //如果已有同名文件将其删除
+        deleteFile(localPath);
+        return localPath;
+    }
+
+
+    /**
+     * 结束下载轮询，关闭dialog
+     */
+    private void downLoadFinish() {
+
     }
 
     /**
@@ -191,8 +209,8 @@ public class DownLoadAppDialog extends Dialog {
 
     /**
      * 删除文件
-     * */
-    private void deleteFile(String filePath){
+     */
+    private void deleteFile(String filePath) {
         File file = new File(filePath);
         file.delete();
     }
