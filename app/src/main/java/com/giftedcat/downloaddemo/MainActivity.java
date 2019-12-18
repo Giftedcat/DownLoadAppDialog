@@ -49,10 +49,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick({R.id.btn_check_version})
+    @OnClick({R.id.btn_down_load})
     public void OnCLickView(View view) {
         switch (view.getId()) {
-            case R.id.btn_check_version:
+            case R.id.btn_down_load:
                 //检查更新
                 downLoadAppDialog.show(apkUrls);
                 break;
